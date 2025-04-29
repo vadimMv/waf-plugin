@@ -353,3 +353,4 @@ class CloudflareWAF_Payment_Controller {
             ? CLOUDFLARE_WAF_PAYMENT_WORKER_URL 
             : 'https://payment.your-workers.dev';
     }
+}

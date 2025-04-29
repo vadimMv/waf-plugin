@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+// Add this before the run_cloudflare_waf() function
+
 class CloudflareWAF_Plugin {
 
     /**
@@ -63,7 +65,6 @@ class CloudflareWAF_Plugin {
         // Initialize logger
         $this->logger = new CloudflareWAF_Logger();
         $this->logger->info( 'Plugin initializing, version ' . $this->version );
-        
         // Initialize WAF service
         $this->waf_service = new CloudflareWAF_Service();
         
@@ -107,9 +108,9 @@ class CloudflareWAF_Plugin {
         $dashboard = new CloudflareWAF_Dashboard( $this->get_plugin_name(), $this->get_version(), $this->waf_service );
         $this->loader->add_action( 'wp_ajax_cloudflare_waf_refresh_stats', $dashboard, 'ajax_refresh_stats' );
         
-        // Settings-specific hooks
-        $settings = new CloudflareWAF_Settings( $this->get_plugin_name(), $this->get_version(), $this->waf_service );
-        $this->loader->add_action( 'wp_ajax_cloudflare_waf_save_settings', $settings, 'ajax_save_settings' );
+        // // Settings-specific hooks
+        // $settings = new CloudflareWAF_Settings( $this->get_plugin_name(), $this->get_version(), $this->waf_service );
+        // $this->loader->add_action( 'wp_ajax_cloudflare_waf_save_settings', $settings, 'ajax_save_settings' );
         
         // Setup wizard hooks
         $wizard = new CloudflareWAF_Wizard( $this->get_plugin_name(), $this->get_version(), $this->waf_service );
@@ -122,14 +123,14 @@ class CloudflareWAF_Plugin {
      */
     private function define_api_hooks() {
         // Register REST API endpoints
-        $api = new CloudflareWAF_API( $this->get_plugin_name(), $this->get_version(), $this->waf_service );
+        $api = new CloudflareWAF_API_Client( $this->get_plugin_name(), $this->get_version(), $this->waf_service );
         $this->loader->add_action( 'rest_api_init', $api, 'register_rest_routes' );
         
         // Schedule daily WAF status check
         $this->loader->add_action( 'cloudflare_waf_daily_check', $this->waf_service, 'check_protection_status' );
         
         // Handle webhook requests
-        $this->loader->add_action( 'init', $api, 'handle_webhook_request' );
+        // $this->loader->add_action( 'init', $api, 'handle_webhook_request' );
     }
 
     /**

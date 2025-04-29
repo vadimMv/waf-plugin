@@ -85,9 +85,46 @@ register_deactivation_hook( __FILE__, 'deactivate_cloudflare_waf' );
 /**
  * Autoload classes
  */
+// spl_autoload_register( function( $class ) {
+//     // Only load our plugin classes
+//     if ( strpos( $class, 'CloudflareWAF_' ) !== 0 ) {
+//         return;
+//     }
+    
+//     // Convert class name to file path
+//     $class_name = str_replace( 'CloudflareWAF_', '', $class );
+//     $class_name = str_replace( '_', '-', $class_name );
+//     $class_file = 'class-' . strtolower( $class_name ) . '.php';
+    
+//     // Check in each directory for the class file
+//     $directories = [
+//         'core',
+//         'api',
+//         'db',
+//         'admin',
+//         'services'
+//     ];
+    
+//     foreach ( $directories as $dir ) {
+//         $file_path = CLOUDFLARE_WAF_PLUGIN_DIR . 'includes/' . $dir . '/' . $class_file;
+        
+//         if ( file_exists( $file_path ) ) {
+//             require_once $file_path;
+//             return;
+//         }
+//     }
+// } );
+// Modify your spl_autoload_register function to include logging
 spl_autoload_register( function( $class ) {
-    // Only load our plugin classes
-    if ( strpos( $class, 'CloudflareWAF_' ) !== 0 ) {
+    // Create a log file in your plugin directory
+    $log_file = CLOUDFLARE_WAF_PLUGIN_DIR . 'autoload_log.txt';
+    
+    // Log the class being requested
+    file_put_contents($log_file, "Attempting to load class: $class\n", FILE_APPEND);
+    
+    // Only load our plugin classes 
+    if ( strpos( $class, 'CloudflareWAF' ) !== 0 ) {
+        file_put_contents($log_file, "Skipping: $class (not a CloudflareWAF class)\n", FILE_APPEND);
         return;
     }
     
@@ -96,25 +133,33 @@ spl_autoload_register( function( $class ) {
     $class_name = str_replace( '_', '-', $class_name );
     $class_file = 'class-' . strtolower( $class_name ) . '.php';
     
-    // Check in each directory for the class file
-    $directories = [
-        'core',
-        'api',
-        'db',
-        'admin',
-        'services'
-    ];
+    file_put_contents($log_file, "Looking for file: $class_file\n", FILE_APPEND);
     
+    // Check in each directory for the class file
+    $directories = [ 'core', 'api', 'db', 'admin', 'services' ];
     foreach ( $directories as $dir ) {
         $file_path = CLOUDFLARE_WAF_PLUGIN_DIR . 'includes/' . $dir . '/' . $class_file;
         
+        file_put_contents($log_file, "Checking: $file_path\n", FILE_APPEND);
+        
         if ( file_exists( $file_path ) ) {
+            file_put_contents($log_file, "FOUND: $file_path\n", FILE_APPEND);
+            
+            // Log before require_once
+            file_put_contents($log_file, "Requiring: $file_path\n", FILE_APPEND);
+            
             require_once $file_path;
+            
+            // Log after require_once (if it succeeds)
+            file_put_contents($log_file, "Successfully required: $file_path\n\n", FILE_APPEND);
+            
             return;
         }
     }
+    
+    // If we get here, the file wasn't found
+    file_put_contents($log_file, "ERROR: Could not find any file for class $class\n\n", FILE_APPEND);
 } );
-
 /**
  * Begins execution of the plugin.
  */

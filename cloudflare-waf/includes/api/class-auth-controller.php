@@ -281,3 +281,4 @@ class CloudflareWAF_Auth_Controller {
             ? CLOUDFLARE_WAF_AUTH_WORKER_URL 
             : 'https://auth.your-workers.dev';
     }
+}

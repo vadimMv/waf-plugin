@@ -35,7 +35,7 @@ services:
         define('WP_DEBUG_DISPLAY', false);
     volumes:
       - wordpress_data:/var/www/html
-      - ./plugin:/var/www/html/wp-content/plugins/cloudflare-waf-protection
+      - ./cloudflare-waf:/var/www/html/wp-content/plugins/cloudflare-waf-protection
     extra_hosts:
       - "waf-test.local:127.0.0.1"
     networks:

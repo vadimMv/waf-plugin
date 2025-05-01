@@ -36,6 +36,7 @@ services:
     volumes:
       - wordpress_data:/var/www/html
       - ./cloudflare-waf:/var/www/html/wp-content/plugins/cloudflare-waf-protection
+      - ./wp-content/debug.log:/var/www/html/wp-content/debug.log
     extra_hosts:
       - "waf-test.local:127.0.0.1"
     networks:

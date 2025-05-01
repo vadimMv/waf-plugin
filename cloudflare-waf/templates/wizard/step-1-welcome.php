@@ -9,6 +9,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
+$error = isset( $_GET['error'] ) ? sanitize_text_field( $_GET['error'] ) : '';
 ?>
 
 <div class="cloudflare-waf-welcome-step">
@@ -16,7 +17,11 @@ if ( ! defined( 'ABSPATH' ) ) {
         <h2><?php _e( 'Welcome to Cloudflare WAF Protection', 'cloudflare-waf' ); ?></h2>
         <p class="intro"><?php _e( 'This wizard will guide you through setting up Cloudflare WAF protection for your WordPress site.', 'cloudflare-waf' ); ?></p>
     </div>
-
+    <?php if ( 'plans_retrieval_failed' === $error ) : ?>
+        <div class="notice notice-error">
+            <p><?php _e( 'No API credentials found. Please contact support. ', 'cloudflare-waf' ); ?></p>
+        </div> 
+    <?php endif; ?>
     <div class="step-content">
         <div class="welcome-graphic">
             <img src="<?php echo CLOUDFLARE_WAF_PLUGIN_URL; ?>assets/images/illustrations/welcome.svg" alt="<?php _e( 'Welcome Illustration', 'cloudflare-waf' ); ?>">

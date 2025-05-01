@@ -383,7 +383,11 @@ class CloudflareWAF_Wizard {
      * Welcome step handler
      */
     public function welcome_handler() {
-        // Mark step as completed
+        $plans = $this->waf_service->payment()->get_available_plans();
+        if (is_wp_error($plans)) {
+            wp_safe_redirect(add_query_arg('error', 'plans_retrieval_failed', admin_url('admin.php?page=cloudflare-waf-wizard&step=welcome') ) );
+            exit;
+        }
         $this->mark_step_completed( 'welcome' );
         
         // Redirect to next step

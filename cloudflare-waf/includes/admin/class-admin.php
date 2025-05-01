@@ -212,7 +212,7 @@ class CloudflareWAF_Admin {
      */
     public function display_wizard_page() {
         $wizard = new CloudflareWAF_Wizard( $this->plugin_name, $this->version, $this->waf_service );
-        $wizard->display_page();
+        $wizard->display_wizard();
     }
 
     /**

@@ -52,6 +52,12 @@ class CloudflareWAF_Payment_Controller {
     public function get_available_plans() {
         $this->logger->info( 'Getting available subscription plans' );
         
+        $auth_token = $this->get_auth_token();
+        if ( is_wp_error( $auth_token ) ) {
+            $this->logger->error( 'Failed to get auth token for plans request', [ 'error' => $auth_token->get_error_message() ] );
+            return $auth_token;
+        }
+
         // Make custom API request to get plans
         $url = $this->get_payment_worker_url() . '/plans';
         $args = [
@@ -59,7 +65,7 @@ class CloudflareWAF_Payment_Controller {
             'timeout' => 30,
             'headers' => [
                 'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $this->get_auth_token()
+                'Authorization' => 'Bearer ' . $auth_token
             ]
         ];
         
